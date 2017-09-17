@@ -1,0 +1,44 @@
+i)
+The original program uses try/catch to handle exceptions. The transformed program uses setjmp/longjmp. When try/catch is used, destructors for all automatic objects constructed afer the try block will be called when an exception is thrown. In the case of this program, the T object t constructed at the start of the function Ackermann will be destroyed using its constructor when an exception is thrown in the current scope, and thus a '~' is printed before the jump occurs. For longjmp, no stack unwinding is done and thus the destructor for t is not called before the jump, causing the '~' not printed when an exception happens.
+
+
+ii)
+input: 15 6 6 7
+
+original program:
+49.67u
+50.26u
+54.46u
+54.90u
+
+transformed program:
+15.58u
+15.36u
+15.13u
+15.16u
+
+Using -O2:
+input : 15 6 6 7
+
+original program:
+61.93u
+63.68u
+63.14u
+62.16u
+
+transformed program:
+14.54u
+14.69u
+14.58u
+14.64u
+
+iii)
+In this experiment, the transformed program runs about 3.5 times faster than the original program. The difference is likely caused by the stack unwinding procedure performed by a try/catch mechanism. Longjmp simply transfer the execution to the call site of previous setjmp without calling any destructors.
+
+iv)
+When compiler optimiazation is used, with the same inputs, the original program runs about 20% slower while the transformed program as a 1s speed gain.
+
+
+
+
+
